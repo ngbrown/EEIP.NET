@@ -12,8 +12,9 @@ using Sres.Net.EEIP;
 // Allen-Bradley 1734-OB4E 4-Channel Digital Output Module
 // Allen-Bradley 1734-OB4E 4-Channel Digital Output Module
 // Allen-Bradley 1734-OB4E 4-Channel Digital Output Module
-//IP-Address: 192.168.178.107 (By DHCP-Server)
-
+// IP-Address: 192.168.178.107 (By DHCP-Server)
+// This example also handles a reconnection procedure if the Impicit Messaging has Timed out 
+// (If the Property "LastReceivedImplicitMessage" is more than one second ago)
 namespace AllenBradleyPointIO
 {
     class Program
@@ -25,7 +26,8 @@ namespace AllenBradleyPointIO
             EEIPClient eeipClient = new EEIPClient();
             //Ip-Address of the Ethernet-IP Device (In this case Allen-Bradley 1734-AENT Point I/O)
             //A Session has to be registered before any communication can be established
-            await eeipClient.RegisterSessionAsync(new Uri("tcp://192.168.178.107"));
+            var plcAddress = new Uri("tcp://192.168.178.107");
+            await eeipClient.RegisterSessionAsync(plcAddress);
 
             //Parameters from Originator -> Target
             eeipClient.O_T_InstanceID = 0x64;              //Instance ID of the Output Assembly
@@ -50,7 +52,7 @@ namespace AllenBradleyPointIO
             //Forward open initiates the Implicit Messaging
             await eeipClient.ForwardOpenAsync();
 
-            while(true)
+            while (true)
             {
 
                 //Read the Inputs Transfered form Target -> Originator
@@ -64,6 +66,23 @@ namespace AllenBradleyPointIO
                 eeipClient.O_T_IOData[3] = 8;
 
                 System.Threading.Thread.Sleep(500);
+
+                //Detect Timeout (Read last Received Message Property)
+                if (DateTime.Now.Ticks > eeipClient.LastReceivedImplicitMessage.Ticks + (1000 * 10000))
+                {
+                    try
+                    {
+                        await eeipClient.ForwardCloseAsync();
+                        await eeipClient.UnRegisterSessionAsync();
+
+                        await eeipClient.RegisterSessionAsync(plcAddress);
+                        await eeipClient.ForwardOpenAsync();
+                    }
+                    catch (Exception)
+                    {
+                        Console.WriteLine("Couldn't reconnect to Point I/O");
+                    }
+                }
             }
 
             //Close the Session

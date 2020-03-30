@@ -288,6 +288,7 @@ namespace Sres.Net.EEIP
             }
             catch (IOException ex)
             {
+                //Handle Exception to allow to Close the Stream if the connection was closed by Remote Device
                 Console.Error.WriteLine(ex.Message);
             }
             finally
@@ -794,6 +795,11 @@ namespace Sres.Net.EEIP
                 //--------------------------BEGIN Error?
                 if (data[42] != 0)      //Exception codes see "Table B-1.1 CIP General Status Codes"
                     throw new CIPException(GeneralStatusCodes.GetStatusCode(data[42]));
+            }
+            catch (Exception e)
+            {
+                // TODO: Change to IOException?
+                //Handle Exception  to allow Forward close if the connection was closed by the Remote Device before
             }
             finally
             {

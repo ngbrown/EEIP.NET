@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net451</TargetFrameworks>
     <Version>2.0.0-alpha1</Version>
-    <Copyright>Copyright © 2018</Copyright>
+    <Copyright>Copyright © 2018-2020</Copyright>
     <Company>Stefan Rossmann Engineering Solutions</Company>
     <Product>EEIP.NET</Product>
     <Description>Ethernet/IP</Description>
