@@ -12,6 +12,8 @@
     <Authors>Stefan Rossmann and others</Authors>
     <PackageProjectUrl>https://github.com/rossmann-engineering/EEIP.NET</PackageProjectUrl>
     <PackageTags>ethernet-ip cip eeip</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
 </Project>
