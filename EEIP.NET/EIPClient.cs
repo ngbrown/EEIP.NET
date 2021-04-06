@@ -141,6 +141,16 @@ namespace Sres.Net.EEIP
         /// </summary>        
         public DateTime LastReceivedImplicitMessage { get; set; }
 
+        public bool IsSessionRegistered
+        {
+            get { return this.stream != null; }
+        }
+
+        public bool IsForwardOpen
+        {
+            get { return this.udpClientReceiveClosed == false && udpClientReceive?.Client != null; }
+        }
+
         private void ReceiveIdentityCallback(IAsyncResult ar)
         {
             var udpState = (UdpState)ar.AsyncState;
